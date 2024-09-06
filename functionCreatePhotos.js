@@ -71,29 +71,32 @@ const selectChange = function() {
     let checkFleBlockPhoto = this.value + "-photos";
     let questionElem = document.getElementById(this.value);
     let parentPhotoNode = questionElem;
+    let noDublicatePhoto = true;
     if (questionElem.lastChild.className == "wrap-picture-front") {
         parentPhotoNode = questionElem.lastChild;
-        checkPhotos(parentPhotoNode,this.parentNode.firstChild.src);
+        noDublicatePhoto = checkPhotos(parentPhotoNode,this.parentNode.firstChild.src);
     } else {
         parentPhotoNode = document.createElement('div');
         parentPhotoNode.setAttribute("class", "wrap-picture-front");
         questionElem.appendChild(parentPhotoNode);
     }
-    let clone = this.parentNode.cloneNode(true);
-    parentPhotoNode.appendChild(clone);
+    if (noDublicatePhoto) {
+        let clone = this.parentNode.cloneNode(true);
+        parentPhotoNode.appendChild(clone);
 
-//    let element = questionElem.lastElementChild.lastElementChild;
-    let element = parentPhotoNode.lastElementChild.lastElementChild;
-    element.onchange = selectChange;
-    element.previousElementSibling.onclick = () => {element.parentNode.remove();};
-    this.parentNode.remove();
-    let imgs = document.images;
-//    console.log(imgs[0].src);
+    //    let element = questionElem.lastElementChild.lastElementChild;
+        let element = parentPhotoNode.lastElementChild.lastElementChild;
+        element.onchange = selectChange;
+        element.previousElementSibling.onclick = () => {element.parentNode.remove();};
+        this.parentNode.remove();
+//        let imgs = document.images;
+    } else {
+        alert("Данная фотография уже прикреплена");
+    }
 }
 
 let checkPhotos = function(parentPhotoNode, photoSrc) {
     let arrIm = Array.prototype.map.call(parentPhotoNode.children, elem => elem.firstChild.src).filter(imgSrc => imgSrc == photoSrc);
-    console.log(arrIm.length);
-//    let array = Array.prototype.map.call(parentPhotoNode.images, img => img.src).filter(imgSrc => imgSrc == photoSrc);
-//    console.log(array.length);
+    return arrIm.length == 0;
+
 }
