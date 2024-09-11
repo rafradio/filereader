@@ -105,14 +105,39 @@ const selectChange = function() {
         element.onchange = selectChange;
         element.previousElementSibling.onclick = () => {element.parentNode.remove();};
         this.parentNode.remove();
+        saveThisImage(this.parentNode.firstChild.src);
 //        let imgs = document.images;
     } else {
         alert("Данная фотография уже прикреплена");
     }
 }
 
-let checkPhotos = function(parentPhotoNode, photoSrc) {
+const checkPhotos = function(parentPhotoNode, photoSrc) {
     let arrIm = Array.prototype.map.call(parentPhotoNode.children, elem => elem.firstChild.src).filter(imgSrc => imgSrc == photoSrc);
     return arrIm.length == 0;
 
+}
+
+const saveThisImage = async (photoSrc) => {
+    let url = new URL(window.location.href);
+    url.pathname = "/TestAnketa/request.php";
+    let dataToSend = {'data': photoSrc};
+    const request = new Request(url, {
+                                method: "POST",
+                                headers: {
+                                            'Content-Type': 'application/json;charset=utf-8',
+                                        },
+                                body: JSON.stringify(dataToSend)
+                                });
+    try {
+        const response = await fetch(request);  
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("url result = ", data.data);
+    }
+    catch(error) {
+        console.log(error.message);
+    }
 }
