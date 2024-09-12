@@ -19,7 +19,6 @@
         $wave_id = 377;
         $key = 'test';
         $ext = 'jpeg';
-//        $path_absolute = dirname(__FILE__) . '/pics/new/';
         $path_absolute = dirname(__FILE__);
         $gettimeofday = gettimeofday(); 
         $qid = $gettimeofday['sec'] . $gettimeofday['usec'];
