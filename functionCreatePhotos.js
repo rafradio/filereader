@@ -82,7 +82,7 @@ const createImageBlock= function(item, fileElem) {
     newItemButton.onclick = () => {newItemButton.parentNode.remove();};
 }
 
-const selectChange = function() {
+const selectChange = async function() {
     console.log("Value вопроса = ", this.value);
     let checkFleBlockPhoto = this.value + "-photos";
     let questionElem = document.getElementById(this.value);
@@ -105,7 +105,7 @@ const selectChange = function() {
         element.onchange = selectChange;
         element.previousElementSibling.onclick = () => {element.parentNode.remove();};
         this.parentNode.remove();
-        saveThisImage(this.parentNode.firstChild.src);
+        await saveThisImage(this.parentNode.firstChild.src);
 //        let imgs = document.images;
     } else {
         alert("Данная фотография уже прикреплена");
@@ -120,6 +120,9 @@ const checkPhotos = function(parentPhotoNode, photoSrc) {
 
 const saveThisImage = async (photoSrc) => {
     let url = new URL(window.location.href);
+    let myUrlSearch = url.search.split('&')[0];
+    myUrlSearch = myUrlSearch.split('=')[1];
+    console.log("мой url = ", myUrlSearch); 
     url.pathname = "/TestAnketa/request.php";
     let dataToSend = {'data': photoSrc};
     const request = new Request(url, {
@@ -136,6 +139,32 @@ const saveThisImage = async (photoSrc) => {
         }
         const data = await response.json();
         console.log("url result = ", data.data);
+    }
+    catch(error) {
+        console.log(error.message);
+    }
+    
+    await requestOnApi(photoSrc);
+}
+
+const requestOnApi = async (photoSrc) => {
+    let url = new URL("https://admin.imystery.ru/apiForPhotoQuestion");
+//    url.pathname = "/TestAnketa/request.php";
+    let dataToSend = {'data': photoSrc};
+    const request = new Request(url, {
+                                method: "POST",
+                                headers: {
+                                            'Content-Type': 'application/json;charset=utf-8',
+                                        },
+                                body: JSON.stringify(dataToSend)
+                                });
+    try {
+        const response = await fetch(request);  
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("from api result = ", data.data);
     }
     catch(error) {
         console.log(error.message);
