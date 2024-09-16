@@ -124,7 +124,7 @@ const saveThisImage = async (photoSrc) => {
     myUrlSearch = myUrlSearch.split('=')[1];
     console.log("мой url = ", myUrlSearch); 
     url.pathname = "/TestAnketa/request.php";
-    let dataToSend = {'data': photoSrc};
+    let dataToSend = {'data': photoSrc, 'task_id': myUrlSearch};
     const request = new Request(url, {
                                 method: "POST",
                                 headers: {
@@ -150,7 +150,10 @@ const saveThisImage = async (photoSrc) => {
 const requestOnApi = async (photoSrc) => {
     let url = new URL("https://admin.imystery.ru/apiForPhotoQuestion");
 //    url.pathname = "/TestAnketa/request.php";
-    let dataToSend = {'data': photoSrc};
+    let url2 = new URL(window.location.href);
+    let myUrlSearch = url2.search.split('&')[0];
+    myUrlSearch = myUrlSearch.split('=')[1];
+    let dataToSend = {'data': photoSrc, 'task_id': myUrlSearch, 'user_id': '111357'};
     const request = new Request(url, {
                                 method: "POST",
                                 headers: {
@@ -164,7 +167,7 @@ const requestOnApi = async (photoSrc) => {
             throw new Error(`Response status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("from api result = ", data.data);
+        console.log("from api result = ", data);
     }
     catch(error) {
         console.log(error.message);
