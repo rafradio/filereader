@@ -1,4 +1,18 @@
-let allPhotosField = document.querySelectorAll('input[type="file"]');
+//let allPhotosField = document.querySelectorAll('input[type="file"]');
+let allPhotosField = document.querySelectorAll('.choose_photo_block');
+let allDeleteButtons = document.querySelectorAll('.delete-for-photo');
+
+allDeleteButtons.forEach((item, index) => {
+    item.onclick = async (event) => {
+        let images = event.target.parentNode.querySelectorAll('img');
+        let nameTag =  images[0].name.split('&');
+        let questionID = nameTag[0].split('=')[1];
+        let picPath = nameTag[1].split('=')[1];
+        console.log("проверяем картинку delete = ", questionID, picPath);
+        let name = await requestOnApi(picPath, questionID, "delete", picPath);
+    }
+});
+
 allPhotosField.forEach((item, index) => {
     item.onchange = (event) => {
         Array.from(event.target.files).forEach((fileElem, indexFile) => {
@@ -10,9 +24,10 @@ allPhotosField.forEach((item, index) => {
 
 const createImageBlock= function(item, fileElem) {
     console.log(item.value);
-    let parent = item.parentNode.parentNode;
-    console.log("Добавляем вопрос", parent.nextElementSibling);
-    let targetQuestion = parent.nextElementSibling;
+//    let parent = item.parentNode.parentNode;
+    let parent = item.parentNode;
+    console.log("Добавляем вопрос", parent.nextElementSibling.nextElementSibling);
+    let targetQuestion = parent.nextElementSibling.nextElementSibling;
     let checkFlag = true;
     let selectQtrArr = new Map();
     console.log("Добавляем вопрос",parent, targetQuestion.getElementsByTagName("b")[1].innerHTML);
@@ -74,7 +89,7 @@ const createImageBlock= function(item, fileElem) {
     parentPhotoNode.appendChild(newDiv);
     let newItem = item.parentNode.lastElementChild.lastElementChild;
 
-    console.log("Поиск ребенка = ", newItem.lastElementChild);
+    console.log("Поиск ребенка = ", item.parentNode);
     let self = newItem.lastElementChild;
     let newItemButton = self.previousElementSibling;
     newItem.lastElementChild.onchange = selectChange.bind(self);
@@ -83,9 +98,16 @@ const createImageBlock= function(item, fileElem) {
 }
 
 const selectChange = async function() {
+    this.fileServerName = "";
+    //this.parentNode.firstChild.setAttribute("nameOfFile", "");
+    let photoBlock = this.parentNode.firstChild;
+//    photoBlock.name = "TEstSQL";
     console.log("Value вопроса = ", this.value);
-    let checkFleBlockPhoto = this.value + "-photos";
+//    let checkFileBlockPhoto = this.value + "-photos";
+    let checkFileBlockPhoto = this.value.replace("qwrap", "");
     let questionElem = document.getElementById(this.value);
+    let parent = this.parentNode.parentNode.parentNode;
+    
     let parentPhotoNode = questionElem;
     let noDublicatePhoto = true;
     if (questionElem.lastChild.className == "wrap-picture-front") {
@@ -103,13 +125,25 @@ const selectChange = async function() {
     //    let element = questionElem.lastElementChild.lastElementChild;
         let element = parentPhotoNode.lastElementChild.lastElementChild;
         element.onchange = selectChange;
-        element.previousElementSibling.onclick = () => {element.parentNode.remove();};
+//        element.previousElementSibling.onclick = () => {element.parentNode.remove();};
         this.parentNode.remove();
-        await saveThisImage(this.parentNode.firstChild.src);
+        console.log("Поиск tag родителя = ", parent.tagName);
+        let typeSql = parent.tagName.toUpperCase() == 'DIV' ? "update" : "insert";
+//        await saveThisImage(this.parentNode.firstChild.src, checkFileBlockPhoto);
+        clone.firstChild.name = await requestOnApi(this.parentNode.firstChild.src, checkFileBlockPhoto, typeSql, clone.firstChild.name);
+//        element.previousElementSibling.onclick = () => {element.parentNode.remove();};
+        element.previousElementSibling.onclick = () => {deleteButtonLogic(element, this.parentNode.firstChild.src, checkFileBlockPhoto, typeSql, clone.firstChild.name);};
 //        let imgs = document.images;
     } else {
         alert("Данная фотография уже прикреплена");
     }
+}
+
+const deleteButtonLogic = async function(element, photoSrc, questionId, typeSql, fileName) {
+    element.parentNode.remove();
+    typeSql = "delete";
+    let name = await requestOnApi(photoSrc, questionId, typeSql, fileName);
+    
 }
 
 const checkPhotos = function(parentPhotoNode, photoSrc) {
@@ -118,42 +152,42 @@ const checkPhotos = function(parentPhotoNode, photoSrc) {
 
 }
 
-const saveThisImage = async (photoSrc) => {
-    let url = new URL(window.location.href);
-    let myUrlSearch = url.search.split('&')[0];
-    myUrlSearch = myUrlSearch.split('=')[1];
-    console.log("мой url = ", myUrlSearch); 
-    url.pathname = "/TestAnketa/request.php";
-    let dataToSend = {'data': photoSrc, 'task_id': myUrlSearch};
-    const request = new Request(url, {
-                                method: "POST",
-                                headers: {
-                                            'Content-Type': 'application/json;charset=utf-8',
-                                        },
-                                body: JSON.stringify(dataToSend)
-                                });
-    try {
-        const response = await fetch(request);  
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("url result = ", data.data);
-    }
-    catch(error) {
-        console.log(error.message);
-    }
-    
-    await requestOnApi(photoSrc);
-}
-
-const requestOnApi = async (photoSrc) => {
-    let url = new URL("https://admin.imystery.ru/apiForPhotoQuestion");
+//const saveThisImage = async (photoSrc, questionId) => {
+//    let url = new URL(window.location.href);
+//    let myUrlSearch = url.search.split('&')[0];
+//    myUrlSearch = myUrlSearch.split('=')[1];
+//    console.log("мой url = ", myUrlSearch); 
 //    url.pathname = "/TestAnketa/request.php";
+//    let dataToSend = {'data': photoSrc, 'task_id': myUrlSearch};
+//    const request = new Request(url, {
+//                                method: "POST",
+//                                headers: {
+//                                            'Content-Type': 'application/json;charset=utf-8',
+//                                        },
+//                                body: JSON.stringify(dataToSend)
+//                                });
+//    try {
+//        const response = await fetch(request);  
+//        if (!response.ok) {
+//            throw new Error(`Response status: ${response.status}`);
+//        }
+//        const data = await response.json();
+//        console.log("url result = ", data.data);
+//    }
+//    catch(error) {
+//        console.log(error.message);
+//    }
+//    
+//    await requestOnApi(photoSrc, questionId);
+//}
+
+const requestOnApi = async (photoSrc, questionId, typeSql, fileName) => {
+    let url = new URL("https://admin.imystery.ru/apiForPhotoQuestion");
+
     let url2 = new URL(window.location.href);
     let myUrlSearch = url2.search.split('&')[0];
     myUrlSearch = myUrlSearch.split('=')[1];
-    let dataToSend = {'data': photoSrc, 'task_id': myUrlSearch, 'user_id': '111357'};
+    let dataToSend = {'data': photoSrc, 'task_id': myUrlSearch, 'user_id': '111357', 'question_id': questionId, 'type': typeSql, 'fileName': fileName};
     const request = new Request(url, {
                                 method: "POST",
                                 headers: {
@@ -168,6 +202,7 @@ const requestOnApi = async (photoSrc) => {
         }
         const data = await response.json();
         console.log("from api result = ", data);
+        return data.file_name;
     }
     catch(error) {
         console.log(error.message);
