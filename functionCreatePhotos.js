@@ -1,6 +1,8 @@
 //let allPhotosField = document.querySelectorAll('input[type="file"]');
 let allPhotosField = document.querySelectorAll('.choose_photo_block');
 let allDeleteButtons = document.querySelectorAll('.delete-for-photo');
+let allSelectorsButtons = document.querySelectorAll('.select-for-photo');
+
 
 allDeleteButtons.forEach((item, index) => {
     item.onclick = async (event) => {
@@ -10,6 +12,13 @@ allDeleteButtons.forEach((item, index) => {
         let picPath = nameTag[1].split('=')[1];
         console.log("проверяем картинку delete = ", questionID, picPath);
         let name = await requestOnApi(picPath, questionID, "delete", picPath);
+        item.parentNode.remove();
+    }
+});
+
+allSelectorsButtons.forEach((item, index) => {
+    item.onchange = () => {
+        console.log("Проверка селекторов");
     }
 });
 
