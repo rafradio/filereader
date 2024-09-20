@@ -53,24 +53,5 @@
         }
         return $new_path . "/" . $new_image_name;
 
-//        $rpath = str_replace("\\","/",$path_absolute) . $dirPath[4];
-//        $rpath = str_replace("/","\\",$rpath);
-//        $new_path = realpath($rpath);
-//        return $rpath;
-//        foreach ($dirPath as $dir) {
-//            if (!file_exists($path_absolute . $dir)) {
-//                if (!@mkdir($path_absolute . $dir, 0777)) {
-//                    trigger_error('Cannot create dir: ' . $path_absolute . $dir);
-//                }
-//
-//                if (!is_dir($path_absolute . $dir)) {
-//                    trigger_error('Cannot create dir - filename conflict: ' . $path_absolute . $dir);
-//                }
-//
-//                if (!is_writable($path_absolute . $dir)) {
-//                    trigger_error('Access for write on dir denied: ' . $path_absolute . $dir);
-//                }
-//            }
-//        }
         
     }
