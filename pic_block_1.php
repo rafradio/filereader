@@ -168,6 +168,7 @@ $_js_pic_cat_counter='';
                 $htmlString .= $ins_pic;
                 $htmlString .= "<button class='delete-for-photo'>Удалить</button>";
                 $htmlSelect = "<select class='select-for-photo'>";
+                $htmlSelect .= "<option value='0'>Выберите вопрос</option>";
                 foreach ($arrayForSelect as $optName) {
                     $str=$optName['name_rus'];
                     if (strlen($str) > 0 && ctype_digit(substr($str, 0, 1))) {
