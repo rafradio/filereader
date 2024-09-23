@@ -16,10 +16,64 @@ allDeleteButtons.forEach((item, index) => {
     }
 });
 
-allSelectorsButtons.forEach((item, index) => {
-    item.onchange = () => {
-        console.log("Проверка селекторов");
+const selectChange = async function() {
+    this.fileServerName = "";
+    //this.parentNode.firstChild.setAttribute("nameOfFile", "");
+    let photoBlock = this.parentNode.firstChild;
+//    photoBlock.name = "TEstSQL";
+    console.log("Value вопроса = ", this.value);
+//    let checkFileBlockPhoto = this.value + "-photos";
+    let checkFileBlockPhoto = this.value.replace("qwrap", "");
+    let questionElem = document.getElementById(this.value);
+    let parent = this.parentNode.parentNode.parentNode;
+    
+    let parentPhotoNode = questionElem;
+    let noDublicatePhoto = true;
+    if (questionElem.lastChild.className == "wrap-picture-front") {
+        parentPhotoNode = questionElem.lastChild;
+        noDublicatePhoto = checkPhotos(parentPhotoNode,this.parentNode.firstChild.src);
+    } else {
+        parentPhotoNode = document.createElement('div');
+        parentPhotoNode.setAttribute("class", "wrap-picture-front");
+        questionElem.appendChild(parentPhotoNode);
     }
+    if (noDublicatePhoto) {
+        let clone = this.parentNode.cloneNode(true);
+        parentPhotoNode.appendChild(clone);
+
+    //    let element = questionElem.lastElementChild.lastElementChild;
+        let element = parentPhotoNode.lastElementChild.lastElementChild;
+        element.onchange = selectChange;
+//        element.previousElementSibling.onclick = () => {element.parentNode.remove();};
+        this.parentNode.remove();
+        console.log("Поиск tag родителя = ", parent.tagName);
+        let typeSql = parent.tagName.toUpperCase() == 'DIV' ? "update" : "insert";
+//        await saveThisImage(this.parentNode.firstChild.src, checkFileBlockPhoto);
+        
+        let myImage = clone.querySelectorAll('img');
+        console.log("Поиск фото sql = ", myImage[0].name);
+        let imgSqlData = myImage[0].name;
+        let imgSqlDataArr = myImage[0].name.split('&');
+        if (imgSqlDataArr.length > 1) {
+            let arr = imgSqlDataArr[1].split('=');
+            imgSqlData = arr[1];
+        }
+        console.log("Поиск фото sql = ", imgSqlData);
+        clone.firstChild.name = await requestOnApi(this.parentNode.firstChild.src, checkFileBlockPhoto, typeSql, imgSqlData);
+//        clone.firstChild.name = await requestOnApi(this.parentNode.firstChild.src, checkFileBlockPhoto, typeSql, clone.firstChild.name);
+//        element.previousElementSibling.onclick = () => {element.parentNode.remove();};
+        element.previousElementSibling.onclick = () => {deleteButtonLogic(element, this.parentNode.firstChild.src, checkFileBlockPhoto, typeSql, clone.firstChild.name);};
+//        let imgs = document.images;
+    } else {
+        alert("Данная фотография уже прикреплена");
+    }
+}
+
+allSelectorsButtons.forEach((item, index) => {
+    item.onchange = selectChange.bind(item);
+//    item.onchange = () => {
+//        console.log("Проверка селекторов");
+//    }
 });
 
 allPhotosField.forEach((item, index) => {
@@ -100,15 +154,15 @@ const createImageBlock= function(item, fileElem) {
 
     console.log("Поиск ребенка = ", item.parentNode);
     let self = newItem.lastElementChild;
+    console.log("Поиск self = ", self);
     let newItemButton = self.previousElementSibling;
     newItem.lastElementChild.onchange = selectChange.bind(self);
 
     newItemButton.onclick = () => {newItemButton.parentNode.remove();};
 }
 
-const selectChange = async function() {
+const selectChange1 = async function() {
     this.fileServerName = "";
-    //this.parentNode.firstChild.setAttribute("nameOfFile", "");
     let photoBlock = this.parentNode.firstChild;
 //    photoBlock.name = "TEstSQL";
     console.log("Value вопроса = ", this.value);
