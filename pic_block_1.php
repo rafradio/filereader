@@ -171,7 +171,7 @@ $_js_pic_cat_counter='';
                 foreach ($arrayForSelect as $optName) {
                     $str=$optName['name_rus'];
                     if (strlen($str) > 0 && ctype_digit(substr($str, 0, 1))) {
-                        $htmlSelect .= "<option value='" . $optName['id'] . "'>" . $optName['name_rus'] . "</option>";
+                        $htmlSelect .= "<option value='" . "qwrap" . $optName['id'] . "'>" . $optName['name_rus'] . "</option>";
                     }
                     
                 }
