@@ -890,7 +890,7 @@ left join location on location.id=user_task.location_id
 				
 				 if ($section_draw==1) {
                                      $idFile='qwrap' . $row["parent_question_id"] . '_file';
-                                        echo '<form action=""><input type="file" class="choose_photo_block" id="'.$idFile.'" name="myfile" accept=".jpg, .jpeg, .png, .gif, .heic" multiple><br><br></form>';
+                                        echo '<form action=""><input type="file" class="choose_photo_block" id="'.$idFile.'" name="myfile" accept=".jpg, .jpeg, .png, .gif, .heic" data-questionare="'.$task_questionnaire_id.'" data-x5cat="'.$row['x5cat'].'" multiple><br><br></form>';
                                         echo "<p class='section_class'>".$section_name."</p>";
 //                                        if ($_devdebug) {
 //                                                echo  drawPictureBlock($auditor_pic_array, $x5_cat_arr_list, $row['x5cat'] /* ,  $row['x5subcat'],  $row['lat'] , $row['lng'] */ );
@@ -1041,7 +1041,7 @@ else
 //    pre($text_dop. '| ' .$label_dop.'| ' .$default_br);
 //                            }
 //			  $text_v.="<input ".$ch_label." onclick='var dfg=$(\"input[name=add_radio_".$row["id"]."]:checked\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",answer_set_id:dfg, type:\"radio\"});'  id='add_radio_".$row_v["id"]."' type='radio' ".$radio_class."  value='".$row_v["id"]."' name='add_radio_".$row["id"]."'/>".$text_dop.$label_dop.$default_br;
-			  $text_v.="<input ".$ch_label." onclick='var dfg=$(\"input[name=add_radio_".$row["id"]."]:checked\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",answer_set_id:dfg, type:\"radio\"});'  id='add_radio_".$row_v["id"]."' type='radio' ".$radio_class."  value='".$row_v["id"]."' name='add_radio_".$row["id"]."'/>".$label_dop.$default_br;
+			  $text_v.="<input ".$ch_label." onclick='var dfg=$(\"input[name=add_radio_".$row["id"]."]:checked\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",answer_set_id:dfg, type:\"radio\"}, this.parentNode);'  id='add_radio_".$row_v["id"]."' type='radio' ".$radio_class."  value='".$row_v["id"]."' name='add_radio_".$row["id"]."'/>".$label_dop.$default_br;
 			  
 			  
 		  }
@@ -1097,7 +1097,7 @@ else
 			  }
 			  
 // $row_v["id"]
-			  $text_v.="<label><input ".$ch_label." onclick='var dfg=GetMultiChecked(".$row["id"]."); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].", answer_set_id:". $row_v["id"].", val:dfg, type:\"checkbox\"});' id='multiselect_".$row_v["id"]."' type='checkbox'  name='multi_select_".$row["id"]."'/>".$row_v["text"]."</label><br>";
+			  $text_v.="<label><input data-hide='".$row_v["question_id_to_hide"] ."' data-show='".$row_v["question_id_to_show"] ."' ".$ch_label." onclick='var dfg=GetMultiChecked(".$row["id"]."); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].", answer_set_id:". $row_v["id"].", val:dfg, type:\"checkbox\"}, this.parentNode);' id='multiselect_".$row_v["id"]."' type='checkbox'  name='multi_select_".$row["id"]."'/>".$row_v["text"]."</label><br>";
 		  }
 	
 		
@@ -1140,7 +1140,7 @@ else
 			
 			if ($row["is_text_result"]==1) {
 				
-				 $text_v.="<input onchange='var dfg=$(\"#add_answer_digit_".$row["id"]."\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_digit\"});' type='text' value='".$row["real_digit_result"]."' id='add_answer_digit_".$row["id"]."' /><div style='clear:both; height:10px;'></div>";
+				 $text_v.="<input onchange='var dfg=$(\"#add_answer_digit_".$row["id"]."\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_digit\"}, this.parentNode);' type='text' value='".$row["real_digit_result"]."' id='add_answer_digit_".$row["id"]."' /><div style='clear:both; height:10px;'></div>";
 			}
 			
 			
@@ -1151,14 +1151,14 @@ else
 			
 				// $text_v.="<input type='text'  value='' id='add_answer_digit_".$row["id"]."' /><div style='clear:both; height:10px;'></div><input type='button' onclick='var dfg=$(\"#add_answer_digit_".$row["id"]."\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_digit\"});' value='Сохранить'/><div style='clear:both; height:10px;'></div>";
 				
-				 $text_v.="<input   type='text'  value='".$row["real_digit_result"]."' id='add_answer_digit_".$row["id"]."'  onchange='var dfg=$(\"#add_answer_digit_".$row["id"]."\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_digit\"});' /><div style='clear:both; height:10px;'></div>";
+				 $text_v.="<input   type='text'  value='".$row["real_digit_result"]."' id='add_answer_digit_".$row["id"]."'  onchange='var dfg=$(\"#add_answer_digit_".$row["id"]."\").val(); add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_digit\"}, this.parentNode);' /><div style='clear:both; height:10px;'></div>";
 				
 
 			}
 			
 			// if (dfg.length===0){alert(\"Количество символов должно быть больше 0!\");return;}; 
 			if ($row["is_comment"]>=1) {
-				 $text_v.="<textarea onblur='var dfg=$(\"#comment_".$row["id"]."\").val(); dfg=$.trim(dfg); if (dfg.length===0){return;};  add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_comment\"});' style='width:300px; height:150px;'  id='comment_".$row["id"]."'>".$row["real_comment_text"]."</textarea><div style='clear:both; height:10px;'></div><div style='clear:both; height:10px;'></div>";
+				 $text_v.="<textarea onblur='var dfg=$(\"#comment_".$row["id"]."\").val(); dfg=$.trim(dfg); if (dfg.length===0){return;};  add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:dfg,type:\"answer_comment\"}, this.parentNode);' style='width:300px; height:150px;'  id='comment_".$row["id"]."'>".$row["real_comment_text"]."</textarea><div style='clear:both; height:10px;'></div><div style='clear:both; height:10px;'></div>";
 				 
 				  
 				 
@@ -1169,7 +1169,7 @@ else
 // GEH is_jti
 			if ($row["is_jti"]>0) {
 // Автосохранение ответа 'jti'
-                            $text_v.= PHP_EOL . "<script> add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:'jti',type:\"answer_comment\"});</script>";
+                            $text_v.= PHP_EOL . "<script> add_user_answer({user_id:".$row["user_id"].",task_id:".$task_id.",qid:".$row["id"].",val:'jti',type:\"answer_comment\"}, this.parentNode);</script>";
 			}
 
 			
@@ -1381,7 +1381,7 @@ if (false ) {
     echo ">";
     echo '<script src="http://localhost/TestAnketa/function_auditor.js"></script>';
     echo '<script src="http://localhost/TestAnketa/functionCheckComments.js"></script>';
-    echo '<script src="http://localhost/TestAnketa/functionCreatePhotos.js"></script>';
+    echo '<script src="http://localhost/TestAnketa/functionCreatePhotos_2.js"></script>';
 
 }
 
