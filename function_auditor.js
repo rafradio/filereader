@@ -2043,9 +2043,11 @@ function auditor_help()
 
 function add_user_answer(obj, self)
 {
-        console.log("ajax", self);
+        let idToHide = self.childNodes[0].dataset.hide;
+        console.log("ajax", self, idToHide);
+        
         let siblings = Array.from(self.parentNode.children).filter((child) => (child !== self));
-        siblings = siblings.filter((sibl) => {
+        let siblingsNew = siblings.filter((sibl) => {
             if (sibl.childNodes.length > 0) {
                 if (sibl.childNodes[0].checked) {
                     return true;
@@ -2056,12 +2058,13 @@ function add_user_answer(obj, self)
                 return false;
             }
         });
-        console.log("Поиск родственников = ", siblings);
-        if (siblings.length > 0) {
-            if (siblings[0].childNodes[1].nodeValue == "Мясная гастрономия") {
-                console.log("Поиск проверки родственников ближайших = ", siblings[0].childNodes[1]);
+        let flagForHide = true;
+        console.log("Поиск родственников = ", siblingsNew);
+        if (siblingsNew.length > 0) {
+            if (siblingsNew[0].childNodes[1].nodeValue == "Мясная гастрономия") {
+                console.log("Поиск проверки родственников ближайших = ", siblingsNew[0].childNodes[1]);
             }
-            console.log("Поиск родственников ближайших = ", siblings[0].childNodes[1].nodeValue);
+            console.log("Поиск родственников ближайших = ", siblingsNew[0].childNodes[1].nodeValue);
         }
             
 	$.ajax({
