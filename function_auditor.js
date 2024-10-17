@@ -2049,7 +2049,7 @@ function add_user_answer(obj, self)
         let siblings = Array.from(self.parentNode.children).filter((child) => (child !== self));
         let siblingsNew = siblings.filter((sibl) => {
             if (sibl.childNodes.length > 0) {
-                if (sibl.childNodes[0].checked) {
+                if (sibl.childNodes[0].checked && sibl.childNodes[0].dataset.show == idToHide) {
                     return true;
                 } else {
                     return false;
@@ -2058,7 +2058,17 @@ function add_user_answer(obj, self)
                 return false;
             }
         });
-        let flagForHide = true;
+        let flagForHide = siblingsNew.length > 0 ? false : true;
+        let flagForShow = true;
+        let flagForAnother = false;
+        let  text = self.childNodes.length > 1 && self.childNodes[1].nodeValue ? self.childNodes[1].nodeValue.toLowerCase(): "";
+        if (!self.childNodes[0].checked && text.includes("друг") && self.childNodes[0].dataset.hide == self.childNodes[0].dataset.show) {
+//            flagForHide = false;
+//            idToHide = "0";
+            flagForShow = false;
+            flagForAnother = true;
+            
+        }
         console.log("Поиск родственников = ", siblingsNew);
         if (siblingsNew.length > 0) {
             if (siblingsNew[0].childNodes[1].nodeValue == "Мясная гастрономия") {
@@ -2083,13 +2093,23 @@ function add_user_answer(obj, self)
 
 
                           $(data.q_hide).each(function ( index, value) {
-                                console.log('index='+value);
+                                console.log('Проверяем скрытие index='+value, flagForHide, idToHide);
+                                if (flagForHide && value != idToHide) {
+                                    console.log('Проверяем скрытие ='+value, flagForHide, idToHide);
                                 $("#qwrap"+value).hide();
+                                if (flagForAnother) {
+                                    document.getElementById("qwrap"+idToHide).style.display="none";
+                                }
+                            }
                          });
 
                           $(data.q_show).each(function ( index, value) {
-                                //console.log(value);
-                                $("#qwrap"+value).show();
+                                console.log("Открытие", value, flagForShow);
+                                if (flagForShow) {
+                                    console.log("Проверяем Открытие", value, flagForShow);
+                                    $("#qwrap"+value).show();
+                                }
+                                
                          });
 
 			 if (typeof data.all_answers!=="undefined") {
